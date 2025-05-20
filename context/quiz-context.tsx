@@ -17,6 +17,7 @@ type QuizContextType = {
   nextQuestion: () => void
   previousQuestion: () => void
   calculateScore: () => number
+  isPassingScore: (score: number) => boolean
   countUnattempted: () => number
   resetQuiz: () => void
   endQuiz: () => Promise<void>
@@ -28,7 +29,7 @@ export function QuizProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState<(string | null)[]>(Array(quizData.length).fill(null))
-  const [timeRemaining, setTimeRemaining] = useState(180) // 3 minutes in seconds
+  const [timeRemaining, setTimeRemaining] = useState(3600) // 60 minutes in seconds
   const [isQuizActive, setIsQuizActive] = useState(false)
   const [isQuizCompleted, setIsQuizCompleted] = useState(false)
   const [quizResultId, setQuizResultId] = useState<number | null>(null)
@@ -56,7 +57,7 @@ export function QuizProvider({ children }: { children: React.ReactNode }) {
     setIsQuizActive(true)
     setCurrentQuestion(0)
     setAnswers(Array(quizData.length).fill(null))
-    setTimeRemaining(180)
+    setTimeRemaining(3600) // Reset to 60 minutes
     setIsQuizCompleted(false)
     setQuizResultId(null)
     setStartTime(Date.now())
@@ -95,6 +96,10 @@ export function QuizProvider({ children }: { children: React.ReactNode }) {
     return Math.round((correctAnswers / quizData.length) * 100)
   }
 
+  const isPassingScore = (score: number) => {
+    return score >= 40 // Passing mark is 40%
+  }
+
   const countUnattempted = () => {
     return answers.filter((answer) => answer === null).length
   }
@@ -102,7 +107,7 @@ export function QuizProvider({ children }: { children: React.ReactNode }) {
   const resetQuiz = () => {
     setCurrentQuestion(0)
     setAnswers(Array(quizData.length).fill(null))
-    setTimeRemaining(180)
+    setTimeRemaining(3600) // Reset to 60 minutes
     setIsQuizActive(false)
     setIsQuizCompleted(false)
     setQuizResultId(null)
@@ -120,7 +125,7 @@ export function QuizProvider({ children }: { children: React.ReactNode }) {
       (answer, index) => answer !== null && answer !== quizData[index].correctAnswer,
     ).length
     const unattempted = countUnattempted()
-    const timeTaken = startTime ? Math.floor((Date.now() - startTime) / 1000) : 180 - timeRemaining
+    const timeTaken = startTime ? Math.floor((Date.now() - startTime) / 1000) : 3600 - timeRemaining
 
     try {
       // Save quiz result to database
@@ -167,6 +172,7 @@ export function QuizProvider({ children }: { children: React.ReactNode }) {
         nextQuestion,
         previousQuestion,
         calculateScore,
+        isPassingScore,
         countUnattempted,
         resetQuiz,
         endQuiz,

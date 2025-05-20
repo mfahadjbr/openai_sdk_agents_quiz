@@ -65,6 +65,9 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen bg-[#0a1b36] text-white flex flex-col items-center justify-center p-4">
+      <div className="flex flex-col items-center justify-center mb-10">
+        <h1 className="text-5xl font-bold">OpenAI SDK Agents Quiz</h1>
+      </div>
       <div className="max-w-md w-full">
         <Card className="w-full bg-[#1a2a47] border-purple-500 border">
           <CardHeader>

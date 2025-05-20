@@ -10,20 +10,21 @@ export function Timer() {
   const [progress, setProgress] = useState(100)
 
   useEffect(() => {
-    // Calculate progress percentage (180 seconds = 100%)
-    const percentage = (timeRemaining / 180) * 100
+    // Calculate progress percentage (3600 seconds = 100%)
+    const percentage = (timeRemaining / 3600) * 100
     setProgress(percentage)
   }, [timeRemaining])
 
-  // Format time as MM:SS
-  const minutes = Math.floor(timeRemaining / 60)
+  // Format time as HH:MM:SS
+  const hours = Math.floor(timeRemaining / 3600)
+  const minutes = Math.floor((timeRemaining % 3600) / 60)
   const seconds = timeRemaining % 60
-  const formattedTime = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+  const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
 
   // Determine color based on time remaining
   const getColorClass = () => {
-    if (timeRemaining > 60) return "text-green-500"
-    if (timeRemaining > 30) return "text-yellow-500"
+    if (timeRemaining > 1800) return "text-green-500" // More than 30 minutes
+    if (timeRemaining > 900) return "text-yellow-500" // More than 15 minutes
     return "text-red-500 animate-pulse"
   }
 
@@ -39,7 +40,7 @@ export function Timer() {
       <Progress
         value={progress}
         className="h-2 bg-[#0d2145]"
-        indicatorClassName={timeRemaining > 60 ? "bg-green-500" : timeRemaining > 30 ? "bg-yellow-500" : "bg-red-500"}
+        indicatorClassName={timeRemaining > 1800 ? "bg-green-500" : timeRemaining > 900 ? "bg-yellow-500" : "bg-red-500"}
       />
     </div>
   )

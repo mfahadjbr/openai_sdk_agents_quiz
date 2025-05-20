@@ -10,17 +10,17 @@ export default function QuizContent({ userName }: { userName: string }) {
   const router = useRouter()
   const { startQuiz, isQuizActive, isQuizCompleted } = useQuiz()
 
+  // Start quiz when component mounts
   useEffect(() => {
-    // Start the quiz when the page loads
-    if (!isQuizActive && !isQuizCompleted) {
-      startQuiz()
-    }
+    startQuiz()
+  }, []) // Empty dependency array to run only once on mount
 
-    // Redirect to results if quiz is completed
+  // Handle quiz completion
+  useEffect(() => {
     if (isQuizCompleted) {
       router.push("/results")
     }
-  }, [startQuiz, isQuizActive, isQuizCompleted, router])
+  }, [isQuizCompleted, router])
 
   return (
     <main className="min-h-screen bg-[#0a1b36] text-white flex flex-col items-center p-4">

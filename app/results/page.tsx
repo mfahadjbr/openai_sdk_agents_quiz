@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { useQuiz } from "@/context/quiz-context"
 import { quizData } from "@/data/quiz-data"
@@ -12,14 +12,14 @@ import { CheckCircle, XCircle, Clock, Trophy, AlertTriangle, Flag, Home } from "
 
 export default function ResultsPage() {
   const router = useRouter()
-  const { answers, isQuizCompleted, calculateScore, countUnattempted, timeRemaining, resetQuiz } = useQuiz()
+  const { answers, isQuizCompleted, calculateScore, countUnattempted, timeRemaining, resetQuiz, isPassingScore } = useQuiz()
   const [user, setUser] = useState<{ name: string } | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   const score = calculateScore()
-  const isPassed = score >= 60
+  const hasPassed = isPassingScore(score)
   const isTimeUp = timeRemaining === 0
-  const unattemptedCount = countUnattempted()
+  const unattempted = countUnattempted()
 
   useEffect(() => {
     // If quiz is not completed, redirect to home
@@ -45,6 +45,13 @@ export default function ResultsPage() {
 
     fetchUser()
   }, [isQuizCompleted, router])
+
+  useEffect(() => {
+    // Redirect to dashboard if no quiz was taken
+    if (score === 0) {
+      router.push("/dashboard")
+    }
+  }, [score, router])
 
   if (!isQuizCompleted || isLoading) {
     return (
@@ -75,114 +82,50 @@ export default function ResultsPage() {
           </Card>
         )}
 
-        {isTimeUp ? (
-          <Card className="w-full bg-[#1a2a47] border-yellow-500 border mb-8">
-            <CardHeader className="flex flex-row items-center gap-4">
-              <Clock className="h-12 w-12 text-yellow-500" />
-              <div>
-                <CardTitle className="text-2xl text-white">Time's Up!</CardTitle>
-                <CardDescription className="text-yellow-300">
-                  You ran out of time before completing the quiz.
-                </CardDescription>
+        <Card className="bg-[#1a2a47] border-purple-500 border">
+          <CardHeader>
+            <CardTitle className="text-2xl text-white">Quiz Results</CardTitle>
+            <CardDescription className="text-purple-300">
+              {hasPassed ? "Congratulations! You've passed the quiz!" : "Keep practicing! You can do better next time."}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-lg text-white">Your Score:</span>
+                <span className={`text-2xl font-bold ${hasPassed ? "text-green-400" : "text-red-400"}`}>
+                  {score}%
+                </span>
               </div>
-            </CardHeader>
-          </Card>
-        ) : (
-          <Card className="w-full bg-[#1a2a47] border-purple-500 border mb-8">
-            <CardHeader className="flex flex-row items-center gap-4">
-              {unattemptedCount === quizData.length ? (
-                <Flag className="h-12 w-12 text-yellow-500" />
-              ) : isPassed ? (
-                <Trophy className="h-12 w-12 text-green-500" />
-              ) : (
-                <AlertTriangle className="h-12 w-12 text-red-500" />
-              )}
-              <div>
-                <CardTitle className="text-2xl text-white">
-                  {unattemptedCount === quizData.length
-                    ? "Quiz Submitted"
-                    : isPassed
-                      ? "Congratulations!"
-                      : "Better Luck Next Time"}
-                </CardTitle>
-                <CardDescription
-                  className={
-                    unattemptedCount === quizData.length
-                      ? "text-yellow-300"
-                      : isPassed
-                        ? "text-green-300"
-                        : "text-red-300"
-                  }
-                >
-                  {unattemptedCount === quizData.length
-                    ? "You didn't attempt any questions."
-                    : isPassed
-                      ? "You passed the quiz!"
-                      : "You didn't reach the passing score of 60%."}
-                </CardDescription>
+              <div className="flex justify-between items-center">
+                <span className="text-lg text-white">Status:</span>
+                <span className={`text-xl font-bold ${hasPassed ? "text-green-400" : "text-red-400"}`}>
+                  {hasPassed ? "PASS" : "FAIL"}
+                </span>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex justify-center mb-6">
-                <div className="relative w-40 h-40">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-4xl font-bold">{score}%</span>
-                  </div>
-                  <svg className="w-full h-full" viewBox="0 0 100 100">
-                    <circle
-                      className="text-gray-700 stroke-current"
-                      strokeWidth="10"
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      fill="transparent"
-                    ></circle>
-                    <circle
-                      className={`${
-                        unattemptedCount === quizData.length
-                          ? "text-yellow-500"
-                          : isPassed
-                            ? "text-green-500"
-                            : "text-red-500"
-                      } stroke-current`}
-                      strokeWidth="10"
-                      strokeLinecap="round"
-                      strokeDasharray={`${score * 2.51} 251`}
-                      strokeDashoffset="0"
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      fill="transparent"
-                      transform="rotate(-90 50 50)"
-                    ></circle>
-                  </svg>
-                </div>
+              <div className="flex justify-between items-center">
+                <span className="text-lg text-white">Unattempted Questions:</span>
+                <span className="text-xl font-bold text-yellow-400">{unattempted}</span>
               </div>
-
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div className="bg-[#1a2a47] p-4 rounded-lg">
-                  <p className="text-sm text-purple-300">Correct Answers</p>
-                  <p className="text-2xl font-bold text-green-400">
-                    {answers.filter((answer, index) => answer === quizData[index].correctAnswer).length}
-                  </p>
-                </div>
-                <div className="bg-[#1a2a47] p-4 rounded-lg">
-                  <p className="text-sm text-purple-300">Incorrect Answers</p>
-                  <p className="text-2xl font-bold text-red-400">
-                    {
-                      answers.filter((answer, index) => answer !== null && answer !== quizData[index].correctAnswer)
-                        .length
-                    }
-                  </p>
-                </div>
-                <div className="bg-[#1a2a47] p-4 rounded-lg">
-                  <p className="text-sm text-purple-300">Not Attempted</p>
-                  <p className="text-2xl font-bold text-yellow-400">{unattemptedCount}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-between">
+            <Link href="/dashboard">
+              <Button variant="outline" className="border-purple-500 text-purple-300 hover:bg-purple-900 hover:text-white">
+                Back to Dashboard
+              </Button>
+            </Link>
+            <Button
+              onClick={() => {
+                resetQuiz()
+                router.push("/quiz")
+              }}
+              className="bg-purple-600 hover:bg-purple-700"
+            >
+              Try Again
+            </Button>
+          </CardFooter>
+        </Card>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">Detailed Results</h2>
 
@@ -267,19 +210,6 @@ export default function ResultsPage() {
             )
           })}
         </Accordion>
-
-        <div className="flex justify-center gap-4 mt-8">
-          <Link href="/dashboard">
-            <Button variant="outline" className="border-purple-500 text-purple-300">
-              <Home className="mr-2 h-4 w-4" /> Dashboard
-            </Button>
-          </Link>
-          <Link href="/quiz">
-            <Button onClick={resetQuiz} className="bg-purple-600 hover:bg-purple-700 text-white">
-              Try Again
-            </Button>
-          </Link>
-        </div>
       </div>
     </main>
   )
