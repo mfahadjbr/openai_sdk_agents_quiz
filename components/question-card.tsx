@@ -55,30 +55,32 @@ export function QuestionCard() {
           ))}
         </RadioGroup>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-between pt-2 items-stretch">
+        <div className="text-sm text-purple-300 flex items-center justify-center w-full sm:w-auto py-2 sm:py-0 order-1 sm:order-2">
+          {currentQuestion + 1} of {quizData.length}
+        </div>
         <Button
           variant="outline"
           onClick={previousQuestion}
           disabled={currentQuestion === 0}
-          className="border-purple-500 bg-purple-500 hover:bg-purple-600 hover:text-white text-white"
+          className="w-full sm:w-auto border-purple-500 bg-purple-500 hover:bg-purple-600 hover:text-white text-white order-2 sm:order-1"
         >
           <ChevronLeft className="mr-2 h-4 w-4" /> Previous
         </Button>
-        <div className="text-sm text-purple-300">
-          {currentQuestion + 1} of {quizData.length}
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={endQuiz}
-            className="border-yellow-500 bg-yellow-400 hover:bg-yellow-500 text-white hover:text-white"
-          >
-            <Flag className="mr-2 h-4 w-4" /> Finish Quiz
-          </Button>
-          <Button onClick={nextQuestion} className="bg-purple-600 hover:bg-purple-700 text-white">
-            {currentQuestion === quizData.length - 1 ? "Finish" : "Next"} <ChevronRight className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          onClick={endQuiz}
+          className="w-full sm:w-auto border-yellow-500 bg-yellow-400 hover:bg-yellow-500 text-white hover:text-white order-3"
+        >
+          <Flag className="mr-2 h-4 w-4" /> Finish Quiz
+        </Button>
+        <Button
+          onClick={nextQuestion}
+          className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white order-4"
+          disabled={currentQuestion === quizData.length - 1}
+        >
+          {currentQuestion === quizData.length - 1 ? "Finish" : <>Next <ChevronRight className="ml-2 h-4 w-4" /></>}
+        </Button>
       </CardFooter>
     </Card>
   )

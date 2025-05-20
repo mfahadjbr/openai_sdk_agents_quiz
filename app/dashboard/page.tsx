@@ -27,9 +27,9 @@ export default async function DashboardPage() {
     return (
       <main className="min-h-screen bg-[#0a1b36] text-white">
         <header className="bg-[#1a2a47] border-b border-purple-800 p-4">
-          <div className="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 className="text-2xl font-bold">OpenAI Agents Quiz</h1>
-            <div className="flex items-center gap-4">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-1 sm:gap-0">
+            <h1 className="text-2xl font-bold w-full text-center sm:text-left sm:w-auto">OpenAI Agents Quiz</h1>
+            <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-4 w-full text-center sm:text-right sm:w-auto">
               <span className="text-purple-300">Welcome, {user.name}</span>
               <LogoutButton />
             </div>
