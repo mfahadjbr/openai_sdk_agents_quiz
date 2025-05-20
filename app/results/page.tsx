@@ -67,7 +67,7 @@ export default function ResultsPage() {
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Quiz Results</h1>
           <Link href="/dashboard">
-            <Button variant="outline" className="border-purple-500 text-purple-300">
+            <Button variant="outline" className="border-purple-500 bg-purple-500 hover:bg-purple-600 text-white hover:text-white">
               <Home className="mr-2 h-4 w-4" /> Dashboard
             </Button>
           </Link>
@@ -111,7 +111,7 @@ export default function ResultsPage() {
           </CardContent>
           <CardFooter className="flex justify-between">
             <Link href="/dashboard">
-              <Button variant="outline" className="border-purple-500 text-purple-300 hover:bg-purple-900 hover:text-white">
+              <Button variant="outline" className="border-purple-500 bg-purple-500 hover:bg-purple-600 text-white hover:text-white">
                 Back to Dashboard
               </Button>
             </Link>
