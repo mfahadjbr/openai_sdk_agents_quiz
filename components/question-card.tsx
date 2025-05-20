@@ -60,7 +60,7 @@ export function QuestionCard() {
           variant="outline"
           onClick={previousQuestion}
           disabled={currentQuestion === 0}
-          className="border-purple-500 text-purple-300 hover:bg-purple-900 hover:text-white"
+          className="border-purple-500 bg-purple-500 hover:bg-purple-600 hover:text-white text-white"
         >
           <ChevronLeft className="mr-2 h-4 w-4" /> Previous
         </Button>
@@ -71,7 +71,7 @@ export function QuestionCard() {
           <Button
             variant="outline"
             onClick={endQuiz}
-            className="border-yellow-500 text-yellow-300 hover:bg-yellow-900/30 hover:text-yellow-200"
+            className="border-yellow-500 bg-yellow-400 hover:bg-yellow-500 text-white hover:text-white"
           >
             <Flag className="mr-2 h-4 w-4" /> Finish Quiz
           </Button>
